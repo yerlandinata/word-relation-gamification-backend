@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"time"
 
 	_ "github.com/lib/pq"
 )
@@ -25,6 +26,8 @@ func InitDB() {
 	if err != nil {
 		log.Fatal("failed to connect to db")
 	}
+
+	db.SetConnMaxLifetime(5 * time.Second)
 }
 
 func GetDB() *sql.DB {

@@ -34,3 +34,9 @@ CREATE TABLE annotation(
 );
 
 CREATE INDEX annotation_player_id ON annotation (player_id);
+
+INSERT INTO public.word_relation_type (id, short_desc, human_desc) VALUES (2, 'synonymy', '%a sama artinya dengan %b');
+INSERT INTO public.word_relation_type (id, short_desc, human_desc) VALUES (1, 'hyponymy', '%a adalah sejenis %b');
+INSERT INTO public.word_relation_type (id, short_desc, human_desc) VALUES (3, 'unrelated', '');
+INSERT INTO public.word_relation_type (id, short_desc, human_desc) VALUES (4, 'notsure', '');
+
