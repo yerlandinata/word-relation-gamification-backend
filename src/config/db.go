@@ -31,7 +31,7 @@ func InitDB() {
 }
 
 func GetDB() *sql.DB {
-	if db != nil {
+	if db == nil {
 		InitDB()
 	}
 	return db
