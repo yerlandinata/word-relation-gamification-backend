@@ -29,3 +29,21 @@ FROM (
 ) p1
 WHERE p1.id=081290624825
 ;
+
+
+SELECT
+    wp.id,
+    wp.word_1,
+    wp.word_2,
+    COUNT(wp.id)
+FROM annotation a
+LEFT JOIN word_pair wp on a.wp_id=wp.id
+WHERE
+    wp.id NOT IN (
+        SELECT wp_id FROM annotation WHERE player_id=81290624825
+    ) AND wp.id NOT IN (
+        SELECT wp_id FROM gold_standard
+    )
+GROUP BY wp.id
+HAVING COUNT(wp.id) <= 2
+ORDER BY COUNT(wp.id) DESC;

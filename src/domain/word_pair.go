@@ -82,7 +82,7 @@ func GetWordPairByAnnotationCriteria(criteria AnnotationCriteria, limit int) ([]
 	if criteria.MaxCount != 0 {
 		params = append(params, criteria.MaxCount)
 		havingStmt += fmt.Sprintf(`
-			HAVING COUNT(wp.id) <= $%d
+			HAVING COUNT(wp.id) < $%d
 		`, len(params))
 	}
 
@@ -91,7 +91,8 @@ func GetWordPairByAnnotationCriteria(criteria AnnotationCriteria, limit int) ([]
 			wp.id,
 			wp.word_1,
 			wp.word_2
-		FROM word_pair wp
+		FROM word_pair annotation a
+		LEFT JOIN word_pair wp on a.wp_id=wp.id
 	` + joinStmt + `
 		WHERE
 	` + whereStmt + `
