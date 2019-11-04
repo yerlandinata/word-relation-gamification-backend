@@ -37,7 +37,7 @@ func GetClassificationWordPair(playerID int64) (*domain.WordPair, error) {
 }
 
 func shouldTrickPlayer(score int) bool {
-	return score == 3 || score%7 == 0
+	return score < 3 || score%7 == 0 || (score <= 15 && score%5 == 0) 
 }
 
 func GetGoldStandards() ([]domain.GoldStandard, error) {
