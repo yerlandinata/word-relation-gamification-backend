@@ -33,8 +33,9 @@ func AddAnnotationAndAddPlayerScore(annotation *Annotation, score int) error {
 			wp_id,
 			wrt_id,
 			player_id,
-			player_time_ms
-		) VALUES ($1, $2, $3, $4)
+			player_time_ms,
+			created_at
+		) VALUES ($1, $2, $3, $4, CURRENT_TIMESTAMP)
 	`, annotation.WordPairID, annotation.WordRelationTypeID, annotation.PlayerID, annotation.PlayerTimeMs)
 
 	if err != nil {

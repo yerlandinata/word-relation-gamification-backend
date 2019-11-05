@@ -35,15 +35,15 @@ SELECT
     wp.id,
     wp.word_1,
     wp.word_2,
-    COUNT(wp.id)
-FROM annotation a
-LEFT JOIN word_pair wp on a.wp_id=wp.id
+    COUNT(a.wp_id)
+FROM word_pair wp
+LEFT JOIN annotation a on wp.id=a.wp_id
 WHERE
     wp.id NOT IN (
-        SELECT wp_id FROM annotation WHERE player_id=81290624825
+        SELECT wp_id FROM annotation WHERE player_id=98086
     ) AND wp.id NOT IN (
         SELECT wp_id FROM gold_standard
     )
-GROUP BY wp.id
-HAVING COUNT(wp.id) <= 2
-ORDER BY COUNT(wp.id) DESC;
+GROUP BY a.wp_id, wp.id
+HAVING COUNT(a.wp_id) <= 2
+ORDER BY COUNT(a.wp_id) DESC;
