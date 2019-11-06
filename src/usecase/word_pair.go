@@ -23,10 +23,10 @@ func GetClassificationWordPair(playerID int64) (*domain.WordPair, error) {
 	annotationCriteria.IsGoldStandard = shouldTrickPlayer(player.AnnotationCount)
 
 	if annotationCriteria.IsGoldStandard {
-		annotationCriteria.MaxCount = annotationCriteria.MaxCount * 4
+		annotationCriteria.MaxCount = config.GetAppConfig().TargetAnnotationCountPerGoldStandard
 	}
 
-	wordPairs, err := domain.GetWordPairByAnnotationCriteria(annotationCriteria, 7)
+	wordPairs, err := domain.GetWordPairByAnnotationCriteria(annotationCriteria, 20)
 	if err != nil {
 		return nil, err
 	}

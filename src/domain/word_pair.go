@@ -98,7 +98,7 @@ func GetWordPairByAnnotationCriteria(criteria AnnotationCriteria, limit int) ([]
 	` + whereStmt + `
 		GROUP BY a.wp_id, wp.id
 	` + havingStmt + `
-		ORDER BY COUNT(a.wp_id) DESC
+		ORDER BY COUNT(a.wp_id) DESC, wp.word_1_freq DESC
 		LIMIT ` + strconv.Itoa(limit)
 
 	rows, err := db.Query(query, params...)

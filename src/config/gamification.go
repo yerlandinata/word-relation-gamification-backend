@@ -7,9 +7,10 @@ import (
 )
 
 type AppConfig struct {
-	TargetAnnotationCountPerWordPair int
-	NotSureAnnotationDBID            int
-	Secret                           string
+	TargetAnnotationCountPerWordPair     int
+	TargetAnnotationCountPerGoldStandard int
+	NotSureAnnotationDBID                int
+	Secret                               string
 }
 
 var config *AppConfig
@@ -20,15 +21,21 @@ func InitAppConfig() {
 		log.Fatal("Failed to load gamification config!")
 	}
 
+	targetGold, err := strconv.Atoi(os.Getenv("TARGET_ANNOTATION_COUNT_PER_GOLD_STANDARD"))
+	if err != nil {
+		log.Fatal("Failed to load gamification config!")
+	}
+
 	notSureID, err := strconv.Atoi(os.Getenv("NOTSURE_WRT_ID"))
 	if err != nil {
 		log.Fatal("Failed to load gamification config!")
 	}
 
 	config = &AppConfig{
-		TargetAnnotationCountPerWordPair: target,
-		Secret:                           os.Getenv("SECRET"),
-		NotSureAnnotationDBID:            notSureID,
+		TargetAnnotationCountPerWordPair:     target,
+		TargetAnnotationCountPerGoldStandard: targetGold,
+		Secret:                               os.Getenv("SECRET"),
+		NotSureAnnotationDBID:                notSureID,
 	}
 }
 
