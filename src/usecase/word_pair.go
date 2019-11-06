@@ -20,6 +20,10 @@ func GetClassificationWordPair(playerID int64) (*domain.WordPair, error) {
 		return nil, err
 	}
 
+	if player.ElapsedTime > config.GetAppConfig().GameTimeLimitMS {
+		return nil, nil
+	}
+
 	annotationCriteria.IsGoldStandard = shouldTrickPlayer(player.AnnotationCount)
 
 	if annotationCriteria.IsGoldStandard {

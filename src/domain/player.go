@@ -15,6 +15,7 @@ type Player struct {
 	Score           int64  `json:"score"`
 	AnnotationCount int    `json:"annotation_count"`
 	Rank            int64  `json:"rank"`
+	ElapsedTime     int    `json:"elapsed"`
 }
 
 func GetPlayerByID(id int64) (*Player, error) {
@@ -28,7 +29,8 @@ func GetPlayerByID(id int64) (*Player, error) {
 			p1.birth_date,
 			p1.score,
 			p1.annotation_count,
-			p1.ranking
+			p1.ranking,
+			p1.elapsed
 		FROM (
 			SELECT 
 				p2.id,
@@ -36,6 +38,7 @@ func GetPlayerByID(id int64) (*Player, error) {
 				p2.birth_date,
 				p2.score,
 				p2.annotation_count,
+				p2.elapsed,
 				RANK () OVER (
 					ORDER BY p2.score DESC
 				) ranking
@@ -44,7 +47,7 @@ func GetPlayerByID(id int64) (*Player, error) {
 		WHERE p1.id=$1
 	`, id)
 
-	err := row.Scan(&result.ID, &result.FullName, &result.Password, &result.Score, &result.AnnotationCount, &result.Rank)
+	err := row.Scan(&result.ID, &result.FullName, &result.Password, &result.Score, &result.AnnotationCount, &result.Rank, &result.ElapsedTime)
 
 	if err == sql.ErrNoRows {
 		return nil, nil
@@ -67,12 +70,31 @@ func AddPlayer(player *Player) error {
 			birth_date,
 			education_level,
 			score,
-			annotation_count
-		) VALUES ($1, $2, $3, $4, 0, 0)
+			annotation_count,
+			elapsed
+		) VALUES ($1, $2, $3, $4, 0, 0, 0)
 	`, player.ID, player.FullName, player.Password, player.EducationLevel)
 
 	if err != nil {
 		log.Printf("DB insertion error: %+v\n", err)
+	}
+
+	return err
+}
+
+func ResetPlayerScoreAndTime(playerID int64) error {
+	db := config.GetDB()
+
+	_, err := db.Exec(`
+		UPDATE player
+		SET
+			score = 0,
+			elapsed = 0
+		WHERE id = $1
+	`, playerID)
+
+	if err != nil {
+		log.Printf("DB update error: %+v\n", err)
 	}
 
 	return err

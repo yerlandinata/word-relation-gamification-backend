@@ -1,6 +1,8 @@
 package usecase
 
 import (
+	"errors"
+
 	"github.com/yerlandinata/word-relation-gamification-backend/src/config"
 	"github.com/yerlandinata/word-relation-gamification-backend/src/domain"
 )
@@ -9,6 +11,15 @@ import (
 // If the word pair is already in gold standard: if correct get 2 score, if wrong get -1 score
 // If the word pair is not in gold standard player will get +1 score
 func AddAnnotation(annotation *domain.Annotation) (*domain.Player, error) {
+
+	player, err := domain.GetPlayerByID(annotation.PlayerID)
+	if err != nil {
+		return nil, err
+	}
+
+	if player.ElapsedTime > config.GetAppConfig().GameTimeLimitMS {
+		return nil, errors.New("Time's up")
+	}
 
 	score := 0
 
@@ -26,7 +37,11 @@ func AddAnnotation(annotation *domain.Annotation) (*domain.Player, error) {
 		if annotation.WordRelationTypeID == goldStandard.WordRelationType.ID {
 			score = 2
 		} else {
-			score = -1 // there will be penalty for choosing SKIP: gold standards are EZ
+			if annotation.WordRelationTypeID == config.GetAppConfig().NotSureAnnotationDBID {
+				score = -1
+			} else {
+				score = -2
+			}
 		}
 	}
 
@@ -35,7 +50,7 @@ func AddAnnotation(annotation *domain.Annotation) (*domain.Player, error) {
 		return nil, err
 	}
 
-	player, err := domain.GetPlayerByID(annotation.PlayerID)
+	player, err = domain.GetPlayerByID(annotation.PlayerID)
 	if err != nil {
 		return nil, err
 	}

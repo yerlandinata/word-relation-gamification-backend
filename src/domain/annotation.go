@@ -48,10 +48,11 @@ func AddAnnotationAndAddPlayerScore(annotation *Annotation, score int) error {
 		UPDATE player
 		SET
 			score = score + $1,
-			annotation_count = annotation_count + 1
+			annotation_count = annotation_count + 1,
+			elapsed = elapsed + $2
 		WHERE
-			id = $2
-	`, score, annotation.PlayerID)
+			id = $3
+	`, score, annotation.PlayerTimeMs, annotation.PlayerID)
 
 	if err != nil {
 		log.Printf("DB tx update error: %+v\n", err)

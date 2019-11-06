@@ -86,6 +86,24 @@ func Register(w http.ResponseWriter, r *http.Request) {
 	httputils.ResponseJSON(w, http.StatusOK, loginResponse)
 }
 
+func ResetPlayerScoreAndTimeAndContinueGame(w http.ResponseWriter, r *http.Request) {
+	playerID := httputils.GetPlayerIDFromJWT(r)
+
+	err := usecase.ResetPlayerScoreAndTime(playerID)
+	if err != nil {
+		httputils.ErrorResponseJSON(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	wordPair, err := usecase.GetClassificationWordPair(playerID)
+	if err != nil {
+		httputils.ErrorResponseJSON(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	httputils.ResponseJSON(w, http.StatusOK, wordPair)
+}
+
 func buildToken(player *domain.Player) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"player_id": fmt.Sprintf("%d", player.ID) + " ",

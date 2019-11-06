@@ -31,3 +31,7 @@ func Login(userID int64, password int64) (*domain.Player, int, error) {
 func Register(player *domain.Player) error {
 	return domain.AddPlayer(player)
 }
+
+func ResetPlayerScoreAndTime(playerID int64) error {
+	return domain.ResetPlayerScoreAndTime(playerID)
+}

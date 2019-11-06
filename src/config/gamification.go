@@ -10,6 +10,7 @@ type AppConfig struct {
 	TargetAnnotationCountPerWordPair     int
 	TargetAnnotationCountPerGoldStandard int
 	NotSureAnnotationDBID                int
+	GameTimeLimitMS                      int
 	Secret                               string
 }
 
@@ -26,6 +27,11 @@ func InitAppConfig() {
 		log.Fatal("Failed to load gamification config!")
 	}
 
+	gameTimeLimitMS, err := strconv.Atoi(os.Getenv("GAME_TIME_LIMIT_MS"))
+	if err != nil {
+		log.Fatal("Failed to load gamification config!")
+	}
+
 	notSureID, err := strconv.Atoi(os.Getenv("NOTSURE_WRT_ID"))
 	if err != nil {
 		log.Fatal("Failed to load gamification config!")
@@ -34,6 +40,7 @@ func InitAppConfig() {
 	config = &AppConfig{
 		TargetAnnotationCountPerWordPair:     target,
 		TargetAnnotationCountPerGoldStandard: targetGold,
+		GameTimeLimitMS:                      gameTimeLimitMS,
 		Secret:                               os.Getenv("SECRET"),
 		NotSureAnnotationDBID:                notSureID,
 	}
