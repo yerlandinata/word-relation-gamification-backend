@@ -38,7 +38,7 @@ func AddAnnotation(annotation *domain.Annotation) (*domain.Player, error) {
 			score = 2
 		} else {
 			if annotation.WordRelationTypeID == config.GetAppConfig().NotSureAnnotationDBID {
-				score = -1
+				score = 0
 			} else {
 				score = -2
 			}
