@@ -19,6 +19,10 @@ type LoginRequest struct {
 	Password int64 `json:"birth_date"`
 }
 
+type UpdateIDRequest struct {
+	NewID int64 `json:"new_id"`
+}
+
 type LoginResponse struct {
 	LoginStatus int            `json:"login_status"`
 	Token       string         `json:"token"`
@@ -56,7 +60,12 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		loginResponse = LoginResponse{LoginStatus: loginStatus}
 	}
 
-	httputils.ResponseJSON(w, http.StatusOK, loginResponse)
+	httpStatus := http.StatusOK
+	if loginResponse.LoginStatus != usecase.LoginOK {
+		httpStatus = http.StatusForbidden
+	}
+
+	httputils.ResponseJSON(w, httpStatus, loginResponse)
 
 }
 
@@ -86,22 +95,60 @@ func Register(w http.ResponseWriter, r *http.Request) {
 	httputils.ResponseJSON(w, http.StatusOK, loginResponse)
 }
 
-func ResetPlayerScoreAndTimeAndContinueGame(w http.ResponseWriter, r *http.Request) {
-	playerID := httputils.GetPlayerIDFromJWT(r)
+func UpdatePlayerID(w http.ResponseWriter, r *http.Request) {
+	var updateIDRequest UpdateIDRequest
+	decoder := json.NewDecoder(r.Body)
+	err := decoder.Decode(&updateIDRequest)
 
-	err := usecase.ResetPlayerScoreAndTime(playerID)
+	newID := updateIDRequest.NewID
+	player := httputils.GetPlayerFromJWT(r)
+
+	err = usecase.UpdatePlayerID(player, newID)
 	if err != nil {
 		httputils.ErrorResponseJSON(w, http.StatusInternalServerError, err)
 		return
 	}
 
-	wordPair, err := usecase.GetClassificationWordPair(playerID)
+	player.ID = newID
+
+	token, err := buildToken(player)
+	if err != nil {
+		httputils.ErrorResponseJSON(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	loginResponse := LoginResponse{LoginStatus: usecase.LoginOK, Token: token}
+	httputils.ResponseJSON(w, http.StatusOK, loginResponse)
+}
+
+func ResetPlayerScoreAndTimeAndContinueGame(w http.ResponseWriter, r *http.Request) {
+	player := httputils.GetPlayerFromJWT(r)
+
+	err := usecase.ResetPlayerScoreAndTime(player.ID)
+	if err != nil {
+		httputils.ErrorResponseJSON(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	wordPair, err := usecase.GetClassificationWordPair(player.ID)
 	if err != nil {
 		httputils.ErrorResponseJSON(w, http.StatusInternalServerError, err)
 		return
 	}
 
 	httputils.ResponseJSON(w, http.StatusOK, wordPair)
+}
+
+func GetRankingsNearPlayer(w http.ResponseWriter, r *http.Request) {
+	player := httputils.GetPlayerFromJWT(r)
+
+	players, err := usecase.GetRankingsNearPlayer(player)
+	if err != nil {
+		httputils.ErrorResponseJSON(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	httputils.ResponseJSON(w, http.StatusOK, players)
 }
 
 func buildToken(player *domain.Player) (string, error) {

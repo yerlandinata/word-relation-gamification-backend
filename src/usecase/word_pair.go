@@ -30,7 +30,7 @@ func GetClassificationWordPair(playerID int64) (*domain.WordPair, error) {
 		annotationCriteria.MaxCount = config.GetAppConfig().TargetAnnotationCountPerGoldStandard
 	}
 
-	wordPairs, err := domain.GetWordPairByAnnotationCriteria(annotationCriteria, 20)
+	wordPairs, err := domain.GetWordPairByAnnotationCriteria(annotationCriteria, 20*player.Level)
 	if err != nil {
 		return nil, err
 	}
@@ -45,7 +45,7 @@ func GetClassificationWordPair(playerID int64) (*domain.WordPair, error) {
 }
 
 func shouldTrickPlayer(score int) bool {
-	return score <= 3 || (score%5 == 0 && score <= 30) || (score%7 == 0 && score > 30)
+	return score < 3 || (score%5 == 0 && score <= 30) || (score%7 == 0 && score > 30)
 }
 
 func GetGoldStandards() ([]domain.GoldStandard, error) {

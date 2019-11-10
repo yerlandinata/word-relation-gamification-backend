@@ -14,8 +14,10 @@ func Serve() {
 	http.HandleFunc("/", helloServer)
 	httputils.HandlePost("/users/login", httphandler.Login)
 	httputils.HandlePost("/users/register", httphandler.Register)
+	httputils.HandlePost("/users/phone_number", httputils.Authenticate(httphandler.UpdatePlayerID))
 	httputils.HandlePost("/users/restart_game", httputils.Authenticate(httphandler.ResetPlayerScoreAndTimeAndContinueGame))
 	httputils.HandleGet("/users/word_pairs", httputils.Authenticate(httphandler.GetClassificationWordPair))
+	httputils.HandleGet("/users/rankings", httputils.Authenticate(httphandler.GetRankingsNearPlayer))
 	httputils.HandlePost("/users/word_pairs/annotations", httputils.Authenticate(httphandler.AddAnnotation))
 	httputils.HandleGet("/gold_standards", httphandler.GetGoldStandards)
 

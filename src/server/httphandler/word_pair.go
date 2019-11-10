@@ -9,9 +9,9 @@ import (
 )
 
 func GetClassificationWordPair(w http.ResponseWriter, r *http.Request) {
-	playerID := httputils.GetPlayerIDFromJWT(r)
+	player := httputils.GetPlayerFromJWT(r)
 
-	wordPair, err := usecase.GetClassificationWordPair(playerID)
+	wordPair, err := usecase.GetClassificationWordPair(player.ID)
 
 	if err != nil {
 		httputils.ErrorResponseJSON(w, http.StatusInternalServerError, err)
@@ -19,7 +19,7 @@ func GetClassificationWordPair(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if wordPair == nil {
-		httputils.ErrorResponseJSON(w, http.StatusForbidden, fmt.Errorf("No word pair for player with ID %d", playerID))
+		httputils.ErrorResponseJSON(w, http.StatusForbidden, fmt.Errorf("No word pair for player with ID %d", player.ID))
 		return
 	}
 

@@ -24,8 +24,7 @@ func AddAnnotation(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// look, do not trust the player ID from the request body, JWT is the truth
-	playerID := httputils.GetPlayerIDFromJWT(r)
-	annotation.PlayerID = playerID
+	annotation.PlayerID = httputils.GetPlayerFromJWT(r).ID
 
 	player, err := usecase.AddAnnotation(&annotation)
 	if err != nil {
@@ -34,7 +33,7 @@ func AddAnnotation(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// the game must carry on
-	wordPair, err := usecase.GetClassificationWordPair(playerID)
+	wordPair, err := usecase.GetClassificationWordPair(player.ID)
 	if err != nil {
 		httputils.ErrorResponseJSON(w, http.StatusInternalServerError, err)
 		return

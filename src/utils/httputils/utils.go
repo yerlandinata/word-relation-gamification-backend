@@ -9,6 +9,8 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/yerlandinata/word-relation-gamification-backend/src/domain"
+
 	"github.com/yerlandinata/word-relation-gamification-backend/src/config"
 
 	jwt "github.com/dgrijalva/jwt-go"
@@ -20,9 +22,9 @@ type HTTPError struct {
 
 type ContextKey string
 
-func GetPlayerIDFromJWT(r *http.Request) int64 {
-	var ctxKey ContextKey = "player_id"
-	return r.Context().Value(ctxKey).(int64)
+func GetPlayerFromJWT(r *http.Request) *domain.Player {
+	var ctxKey ContextKey = "player"
+	return r.Context().Value(ctxKey).(*domain.Player)
 }
 
 func Authenticate(handler http.HandlerFunc) http.HandlerFunc {
@@ -47,7 +49,6 @@ func Authenticate(handler http.HandlerFunc) http.HandlerFunc {
 
 		if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
 			id := claims["player_id"]
-			var contextKey ContextKey = "player_id"
 			playerID, err := strconv.ParseInt(strings.TrimSpace(id.(string)), 10, 64)
 
 			if err != nil {
@@ -55,7 +56,12 @@ func Authenticate(handler http.HandlerFunc) http.HandlerFunc {
 				return
 			}
 
-			ctx := context.WithValue(r.Context(), contextKey, playerID)
+			pass := claims["password"]
+			password, err := strconv.ParseInt(strings.TrimSpace(pass.(string)), 10, 64)
+
+			var contextKey ContextKey = "player"
+			ctx := context.WithValue(r.Context(), contextKey, &domain.Player{ID: playerID, Password: password})
+
 			handler(w, r.WithContext(ctx))
 		} else {
 			ErrorResponseJSON(w, http.StatusUnauthorized, errors.New("Unauthorized"))
