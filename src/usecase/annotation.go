@@ -7,9 +7,7 @@ import (
 	"github.com/yerlandinata/word-relation-gamification-backend/src/domain"
 )
 
-// AddAnnotation will add annotation to our DB,
-// If the word pair is already in gold standard: if correct get 2 score, if wrong get -1 score
-// If the word pair is not in gold standard player will get +1 score
+// AddAnnotation will add annotation to our DB and decide the score for the player
 func AddAnnotation(annotation *domain.Annotation) (*domain.Player, error) {
 
 	player, err := domain.GetPlayerByID(annotation.PlayerID)
@@ -41,6 +39,13 @@ func AddAnnotation(annotation *domain.Annotation) (*domain.Player, error) {
 				score = 0
 			} else {
 				score = -2
+				// add more penalty if the player is playing too fast
+				if annotation.PlayerTimeMs < 1000 {
+					score = -7
+				}
+				if annotation.PlayerTimeMs < 500 {
+					score = -20
+				}
 			}
 		}
 	}
