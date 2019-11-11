@@ -61,6 +61,7 @@ func ResetPlayerScoreAndTime(playerID int64) error {
 
 	// count the gold standard
 	annotationCriteria.IsGoldStandard = true
+	annotationCriteria.MaxCount = config.GetAppConfig().TargetAnnotationCountPerGoldStandard
 	wordPairs, err = domain.GetWordPairByAnnotationCriteria(annotationCriteria, 25)
 	if err != nil {
 		return err
