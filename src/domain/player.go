@@ -110,7 +110,6 @@ func ResetPlayerScoreAndTime(playerID int64) error {
 	_, err := db.Exec(`
 		UPDATE player
 		SET
-			score = 0,
 			elapsed = 0,
 			game_level = game_level + 1
 		WHERE id = $1
