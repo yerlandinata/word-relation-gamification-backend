@@ -56,11 +56,8 @@ func Authenticate(handler http.HandlerFunc) http.HandlerFunc {
 				return
 			}
 
-			pass := claims["password"]
-			password, err := strconv.ParseInt(strings.TrimSpace(pass.(string)), 10, 64)
-
 			var contextKey ContextKey = "player"
-			ctx := context.WithValue(r.Context(), contextKey, &domain.Player{ID: playerID, Password: password})
+			ctx := context.WithValue(r.Context(), contextKey, &domain.Player{ID: playerID})
 
 			handler(w, r.WithContext(ctx))
 		} else {

@@ -10,8 +10,7 @@ import (
 type Player struct {
 	ID              int64  `json:"id"`
 	DisplayName     string `json:"display_name"`
-	Password        int64  `json:"birth_date"`
-	EducationLevel  string `json:"education_level"`
+	CampaignSource  string `json:"campaign_source"`
 	Score           int64  `json:"score"`
 	AnnotationCount int    `json:"annotation_count"`
 	Rank            int    `json:"rank"`
@@ -27,7 +26,6 @@ func GetPlayerByID(id int64) (*Player, error) {
 		SELECT 
 			p1.id,
 			p1.display_name,
-			p1.birth_date,
 			p1.score,
 			p1.annotation_count,
 			p1.ranking,
@@ -50,7 +48,7 @@ func GetPlayerByID(id int64) (*Player, error) {
 		WHERE p1.id=$1
 	`, id)
 
-	err := row.Scan(&result.ID, &result.DisplayName, &result.Password, &result.Score, &result.AnnotationCount, &result.Rank, &result.ElapsedTime, &result.Level)
+	err := row.Scan(&result.ID, &result.DisplayName, &result.Score, &result.AnnotationCount, &result.Rank, &result.ElapsedTime, &result.Level)
 
 	if err == sql.ErrNoRows {
 		return nil, nil
@@ -70,14 +68,13 @@ func AddPlayer(player *Player) error {
 		INSERT INTO player (
 			id,
 			display_name,
-			birth_date,
-			education_level,
+			campaign_source,
 			score,
 			annotation_count,
 			elapsed,
 			game_level
-		) VALUES ($1, $2, $3, $4, 0, 0, 0, 1)
-	`, player.ID, player.DisplayName, player.Password, player.EducationLevel)
+		) VALUES ($1, $2, $3, 0, 0, 0, 1)
+	`, player.ID, player.DisplayName, player.CampaignSource)
 
 	if err != nil {
 		log.Printf("DB insertion error: %+v\n", err)
@@ -104,7 +101,7 @@ func UpdatePlayerID(player *Player, newID int64) error {
 
 }
 
-func ResetPlayerScoreAndTime(playerID int64) error {
+func IncrementPlayerLevelAndResetPlayerTime(playerID int64) error {
 	db := config.GetDB()
 
 	_, err := db.Exec(`

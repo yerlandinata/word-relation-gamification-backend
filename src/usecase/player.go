@@ -8,12 +8,11 @@ import (
 )
 
 const (
-	WrongUserIDOrPassword int = 3
-	UserDoesNotExists     int = 2
-	LoginOK               int = 1
+	UserDoesNotExists int = 2
+	LoginOK           int = 1
 )
 
-func Login(userID int64, password int64) (*domain.Player, int, error) {
+func Login(userID int64) (*domain.Player, int, error) {
 	player, err := domain.GetPlayerByID(userID)
 
 	if err != nil {
@@ -22,10 +21,6 @@ func Login(userID int64, password int64) (*domain.Player, int, error) {
 
 	if player == nil {
 		return nil, UserDoesNotExists, nil
-	}
-
-	if player.Password != password {
-		return nil, WrongUserIDOrPassword, nil
 	}
 
 	return player, LoginOK, nil
@@ -39,7 +34,7 @@ func UpdatePlayerID(player *domain.Player, newID int64) error {
 	return domain.UpdatePlayerID(player, newID)
 }
 
-func ResetPlayerScoreAndTime(playerID int64) error {
+func PlayerLevelUp(playerID int64) error {
 	// first, please check if the player can play again
 	// player can play again if "we think" that the potential score could be higher
 
@@ -71,7 +66,7 @@ func ResetPlayerScoreAndTime(playerID int64) error {
 		return errors.New("cannot play anymore")
 	}
 
-	return domain.ResetPlayerScoreAndTime(playerID)
+	return domain.IncrementPlayerLevelAndResetPlayerTime(playerID)
 }
 
 func GetRankingsNearPlayer(player *domain.Player) ([]domain.Player, error) {

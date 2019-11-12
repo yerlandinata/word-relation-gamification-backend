@@ -15,8 +15,7 @@ import (
 )
 
 type LoginRequest struct {
-	UserID   int64 `json:"id"`
-	Password int64 `json:"birth_date"`
+	UserID int64 `json:"id"`
 }
 
 type UpdateIDRequest struct {
@@ -38,7 +37,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	player, loginStatus, err := usecase.Login(loginRequest.UserID, loginRequest.Password)
+	player, loginStatus, err := usecase.Login(loginRequest.UserID)
 	if err != nil {
 		httputils.ErrorResponseJSON(w, http.StatusInternalServerError, err)
 		return
@@ -121,10 +120,10 @@ func UpdatePlayerID(w http.ResponseWriter, r *http.Request) {
 	httputils.ResponseJSON(w, http.StatusOK, loginResponse)
 }
 
-func ResetPlayerScoreAndTimeAndContinueGame(w http.ResponseWriter, r *http.Request) {
+func PlayerLevelUp(w http.ResponseWriter, r *http.Request) {
 	player := httputils.GetPlayerFromJWT(r)
 
-	err := usecase.ResetPlayerScoreAndTime(player.ID)
+	err := usecase.PlayerLevelUp(player.ID)
 	if err != nil {
 		httputils.ErrorResponseJSON(w, http.StatusInternalServerError, err)
 		return
@@ -154,7 +153,6 @@ func GetRankingsNearPlayer(w http.ResponseWriter, r *http.Request) {
 func buildToken(player *domain.Player) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"player_id": fmt.Sprintf("%d", player.ID) + " ",
-		"password":  fmt.Sprintf("%d", player.Password) + " ",
 	})
 
 	tokenStr, err := token.SignedString([]byte(config.GetAppConfig().Secret))
