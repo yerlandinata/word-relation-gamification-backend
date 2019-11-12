@@ -9,7 +9,7 @@ import (
 
 type Player struct {
 	ID              int64  `json:"id"`
-	FullName        string `json:"full_name"`
+	DisplayName     string `json:"display_name"`
 	Password        int64  `json:"birth_date"`
 	EducationLevel  string `json:"education_level"`
 	Score           int64  `json:"score"`
@@ -26,7 +26,7 @@ func GetPlayerByID(id int64) (*Player, error) {
 	row := db.QueryRow(`
 		SELECT 
 			p1.id,
-			p1.full_name,
+			p1.display_name,
 			p1.birth_date,
 			p1.score,
 			p1.annotation_count,
@@ -36,7 +36,7 @@ func GetPlayerByID(id int64) (*Player, error) {
 		FROM (
 			SELECT 
 				p2.id,
-				p2.full_name,
+				p2.display_name,
 				p2.birth_date,
 				p2.score,
 				p2.annotation_count,
@@ -50,7 +50,7 @@ func GetPlayerByID(id int64) (*Player, error) {
 		WHERE p1.id=$1
 	`, id)
 
-	err := row.Scan(&result.ID, &result.FullName, &result.Password, &result.Score, &result.AnnotationCount, &result.Rank, &result.ElapsedTime, &result.Level)
+	err := row.Scan(&result.ID, &result.DisplayName, &result.Password, &result.Score, &result.AnnotationCount, &result.Rank, &result.ElapsedTime, &result.Level)
 
 	if err == sql.ErrNoRows {
 		return nil, nil
@@ -69,7 +69,7 @@ func AddPlayer(player *Player) error {
 	_, err := db.Exec(`
 		INSERT INTO player (
 			id,
-			full_name,
+			display_name,
 			birth_date,
 			education_level,
 			score,
@@ -77,7 +77,7 @@ func AddPlayer(player *Player) error {
 			elapsed,
 			game_level
 		) VALUES ($1, $2, $3, $4, 0, 0, 0, 1)
-	`, player.ID, player.FullName, player.Password, player.EducationLevel)
+	`, player.ID, player.DisplayName, player.Password, player.EducationLevel)
 
 	if err != nil {
 		log.Printf("DB insertion error: %+v\n", err)
@@ -130,7 +130,7 @@ func GetPlayerRankingsRange(minRank, maxRank int) ([]Player, error) {
 		SELECT *
 		FROM (
 			SELECT
-				full_name,
+				display_name,
 				score,
 				game_level,
 				RANK () OVER (
@@ -149,7 +149,7 @@ func GetPlayerRankingsRange(minRank, maxRank int) ([]Player, error) {
 	for rows.Next() {
 		var p Player
 
-		err = rows.Scan(&p.FullName, &p.Score, &p.Level, &p.Rank)
+		err = rows.Scan(&p.DisplayName, &p.Score, &p.Level, &p.Rank)
 		if err != nil {
 			log.Printf("DB query error: %+v\n", err)
 			return nil, err
