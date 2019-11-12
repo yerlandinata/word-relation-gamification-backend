@@ -30,8 +30,8 @@ func Register(player *domain.Player) error {
 	return domain.AddPlayer(player)
 }
 
-func UpdatePlayerID(player *domain.Player, newID int64) error {
-	return domain.UpdatePlayerID(player, newID)
+func UpdatePlayerIDAndName(player *domain.Player, newID int64, newName string) error {
+	return domain.UpdatePlayerIDAndName(player, newID, newName)
 }
 
 func PlayerLevelUp(playerID int64) error {

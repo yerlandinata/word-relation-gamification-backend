@@ -83,15 +83,16 @@ func AddPlayer(player *Player) error {
 	return err
 }
 
-func UpdatePlayerID(player *Player, newID int64) error {
+func UpdatePlayerIDAndName(player *Player, newID int64, newName string) error {
 	db := config.GetDB()
 
 	_, err := db.Exec(`
 		UPDATE player
 		SET
-			id=$1
-		WHERE id=$2
-	`, newID, player.ID)
+			id=$1,
+			full_name=$2
+		WHERE id=$3
+	`, newID, newName, player.ID)
 
 	if err != nil {
 		log.Printf("DB update error: %+v\n", err)

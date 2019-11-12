@@ -18,8 +18,9 @@ type LoginRequest struct {
 	UserID int64 `json:"id"`
 }
 
-type UpdateIDRequest struct {
-	NewID int64 `json:"new_id"`
+type PlayerDataUpdateRequest struct {
+	NewID   int64  `json:"new_id"`
+	NewName string `json:"full_name"`
 }
 
 type LoginResponse struct {
@@ -94,15 +95,16 @@ func Register(w http.ResponseWriter, r *http.Request) {
 	httputils.ResponseJSON(w, http.StatusOK, loginResponse)
 }
 
-func UpdatePlayerID(w http.ResponseWriter, r *http.Request) {
-	var updateIDRequest UpdateIDRequest
+func UpdatePlayerIDAndName(w http.ResponseWriter, r *http.Request) {
+	var playerDataUpdateRequest PlayerDataUpdateRequest
 	decoder := json.NewDecoder(r.Body)
-	err := decoder.Decode(&updateIDRequest)
+	err := decoder.Decode(&playerDataUpdateRequest)
 
-	newID := updateIDRequest.NewID
+	newID := playerDataUpdateRequest.NewID
+	name := playerDataUpdateRequest.NewName
 	player := httputils.GetPlayerFromJWT(r)
 
-	err = usecase.UpdatePlayerID(player, newID)
+	err = usecase.UpdatePlayerIDAndName(player, newID, name)
 	if err != nil {
 		httputils.ErrorResponseJSON(w, http.StatusInternalServerError, err)
 		return
