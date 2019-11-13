@@ -23,6 +23,10 @@ type PlayerDataUpdateRequest struct {
 	NewName string `json:"full_name"`
 }
 
+type OnboardingRecordRequest struct {
+	OnboardingTimeMs int `json:"onboarding_time_ms"`
+}
+
 type LoginResponse struct {
 	LoginStatus int            `json:"login_status"`
 	Token       string         `json:"token"`
@@ -99,6 +103,10 @@ func UpdatePlayerIDAndName(w http.ResponseWriter, r *http.Request) {
 	var playerDataUpdateRequest PlayerDataUpdateRequest
 	decoder := json.NewDecoder(r.Body)
 	err := decoder.Decode(&playerDataUpdateRequest)
+	if err != nil {
+		httputils.ErrorResponseJSON(w, http.StatusBadRequest, err)
+		return
+	}
 
 	newID := playerDataUpdateRequest.NewID
 	name := playerDataUpdateRequest.NewName
@@ -138,6 +146,25 @@ func PlayerLevelUp(w http.ResponseWriter, r *http.Request) {
 	}
 
 	httputils.ResponseJSON(w, http.StatusOK, wordPair)
+}
+
+func RecordPlayerOnboardingTime(w http.ResponseWriter, r *http.Request) {
+	player := httputils.GetPlayerFromJWT(r)
+
+	var onboardingRecordRequest OnboardingRecordRequest
+	decoder := json.NewDecoder(r.Body)
+	err := decoder.Decode(&onboardingRecordRequest)
+	if err != nil {
+		httputils.ErrorResponseJSON(w, http.StatusBadRequest, err)
+		return
+	}
+
+	err = usecase.RecordPlayerOnboardingTime(player, onboardingRecordRequest.OnboardingTimeMs)
+	if err != nil {
+		httputils.ErrorResponseJSON(w, http.StatusInternalServerError, err)
+	}
+
+	httputils.ResponseJSON(w, http.StatusCreated, nil)
 }
 
 func GetRankingsNearPlayer(w http.ResponseWriter, r *http.Request) {

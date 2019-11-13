@@ -34,6 +34,10 @@ func UpdatePlayerIDAndName(player *domain.Player, newID int64, newName string) e
 	return domain.UpdatePlayerIDAndName(player, newID, newName)
 }
 
+func RecordPlayerOnboardingTime(player *domain.Player, onboardingTimeMS int) error {
+	return domain.SetPlayerOnboardingTime(player, onboardingTimeMS)
+}
+
 func PlayerLevelUp(playerID int64) error {
 	// first, please check if the player can play again
 	// player can play again if "we think" that the potential score could be higher

@@ -16,6 +16,7 @@ func Serve() {
 	httputils.HandlePost("/users/register", httphandler.Register)
 	httputils.HandlePost("/users/phone_number", httputils.Authenticate(httphandler.UpdatePlayerIDAndName))
 	httputils.HandlePost("/users/restart_game", httputils.Authenticate(httphandler.PlayerLevelUp))
+	httputils.HandlePost("/users/onboarding_time", httputils.Authenticate(httphandler.RecordPlayerOnboardingTime))
 	httputils.HandleGet("/users/word_pairs", httputils.Authenticate(httphandler.GetClassificationWordPair))
 	httputils.HandleGet("/users/rankings", httputils.Authenticate(httphandler.GetRankingsNearPlayer))
 	httputils.HandlePost("/users/word_pairs/annotations", httputils.Authenticate(httphandler.AddAnnotation))

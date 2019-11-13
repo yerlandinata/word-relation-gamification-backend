@@ -102,6 +102,24 @@ func UpdatePlayerIDAndName(player *Player, newID int64, newName string) error {
 
 }
 
+func SetPlayerOnboardingTime(player *Player, onboardingTimeMS int) error {
+	db := config.GetDB()
+
+	_, err := db.Exec(`
+		UPDATE player
+		SET
+			onboarding_time_ms=$1
+		WHERE id=$2
+	`, onboardingTimeMS, player.ID)
+
+	if err != nil {
+		log.Printf("DB update error: %+v\n", err)
+	}
+
+	return err
+
+}
+
 func IncrementPlayerLevelAndResetPlayerTime(playerID int64) error {
 	db := config.GetDB()
 
