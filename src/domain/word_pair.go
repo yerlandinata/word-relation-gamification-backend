@@ -26,6 +26,11 @@ type WordPair struct {
 	Word2 string `json:"word_2"`
 }
 
+const (
+	ActiveWordPair   int = 1
+	InactiveWordPair int = 0
+)
+
 type AnnotationCriteria struct {
 	MaxCount               int
 	NotAnnotatedByPlayerID int64
@@ -44,10 +49,15 @@ func GetWordPairByAnnotationCriteria(criteria AnnotationCriteria, limit int) ([]
 	db := config.GetDB()
 
 	whereStmt := `
-		wp.id NOT IN (
-			SELECT wp_id FROM annotation WHERE player_id=$1
+		wp.active_status=$1
+		AND wp.id NOT IN (
+			SELECT wp_id FROM annotation WHERE player_id=$2
 		)
 	`
+	params := make([]interface{}, 0)
+	params = append(params, ActiveWordPair)
+	params = append(params, criteria.NotAnnotatedByPlayerID)
+
 	joinStmt := ""
 
 	if !criteria.IsGoldStandard {
@@ -61,9 +71,6 @@ func GetWordPairByAnnotationCriteria(criteria AnnotationCriteria, limit int) ([]
 	}
 
 	havingStmt := ""
-
-	params := make([]interface{}, 0)
-	params = append(params, criteria.NotAnnotatedByPlayerID)
 
 	if criteria.Word1 != "" {
 		params = append(params, criteria.Word1)
