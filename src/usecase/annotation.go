@@ -61,6 +61,8 @@ func AddAnnotation(annotation *domain.Annotation) (*domain.Player, error) {
 	if err != nil {
 		return nil, err
 	}
+	
+	player.Score += score
 
 	return player, err
 }
