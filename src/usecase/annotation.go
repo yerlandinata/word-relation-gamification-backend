@@ -66,7 +66,7 @@ func AddAnnotation(annotation *domain.Annotation) (*domain.Player, error) {
 	if err != nil {
 		return nil, err
 	}
-	
+
 	player.Score += score
 
 	return player, err
@@ -84,6 +84,11 @@ func InvalidateAnnotationsByPlayerAndGoldStandardAgreements(overallRate, perRela
 		if _, ok := agreements[a.PlayerID]; !ok {
 			agreements[a.PlayerID] = &PlayerGoldStandardAgreements{}
 		}
+
+		if a.GoldStandardRelationTypeID == 0 {
+			continue
+		}
+
 		if a.WordRelationTypeID != a.GoldStandardRelationTypeID {
 			agreements[a.PlayerID].OverallDisagree++
 			switch g := a.GoldStandardRelationTypeID; g {
