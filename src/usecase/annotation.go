@@ -48,16 +48,16 @@ func AddAnnotation(annotation *domain.Annotation) (*domain.Player, error) {
 				}
 			}
 		}
+	} else {
+		if annotation.PlayerTimeMs < 1000 {
+			// too fast
+			return player, nil
+		}
 	}
 
 	score = score * player.Level
 
 	err = domain.AddAnnotationAndAddPlayerScore(annotation, score)
-	if err != nil {
-		return nil, err
-	}
-
-	player, err = domain.GetPlayerByID(annotation.PlayerID)
 	if err != nil {
 		return nil, err
 	}
