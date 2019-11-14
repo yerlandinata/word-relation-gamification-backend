@@ -7,6 +7,11 @@ import (
 	"github.com/yerlandinata/word-relation-gamification-backend/src/domain"
 )
 
+const (
+	HyponymyRelationID  int = 1
+	UnrelatedRelationID int = 3
+)
+
 // AddAnnotation will add annotation to our DB and decide the score for the player
 func AddAnnotation(annotation *domain.Annotation) (*domain.Player, error) {
 
@@ -65,4 +70,61 @@ func AddAnnotation(annotation *domain.Annotation) (*domain.Player, error) {
 	player.Score += score
 
 	return player, err
+}
+
+func InvalidateAnnotationsByPlayerAndGoldStandardAgreements(overallRate, perRelationTypeRate float32) ([]int64, error) {
+	annotations, err := domain.GetAllAnnotations()
+	if err != nil {
+		return nil, err
+	}
+
+	agreements := make(map[int64]*PlayerGoldStandardAgreements)
+
+	for _, a := range annotations {
+		if _, ok := agreements[a.PlayerID]; !ok {
+			agreements[a.PlayerID] = &PlayerGoldStandardAgreements{}
+		}
+		if a.WordRelationTypeID != a.GoldStandardRelationTypeID {
+			agreements[a.PlayerID].OverallDisagree++
+			switch g := a.GoldStandardRelationTypeID; g {
+			case HyponymyRelationID:
+				agreements[a.PlayerID].HyponymyDisagree++
+			default:
+				agreements[a.PlayerID].UnrelatedDisagree++
+			}
+		} else {
+			agreements[a.PlayerID].OverallAgree++
+			switch g := a.GoldStandardRelationTypeID; g {
+			case HyponymyRelationID:
+				agreements[a.PlayerID].HyponymyAgree++
+			default:
+				agreements[a.PlayerID].UnrelatedAgree++
+			}
+		}
+	}
+
+	invalidatedPlayers := make([]int64, 0)
+
+	for k, v := range agreements {
+		totalOverall := v.OverallAgree + v.OverallDisagree
+		totalHyponymy := v.HyponymyAgree + v.HyponymyDisagree
+		totalUnrelated := v.UnrelatedAgree + v.UnrelatedDisagree
+
+		if totalOverall == 0 || totalHyponymy == 0 || totalUnrelated == 0 {
+			continue
+		}
+
+		if float32(v.OverallAgree)/float32(totalOverall) < overallRate ||
+			float32(v.HyponymyAgree)/float32(totalHyponymy) < perRelationTypeRate ||
+			float32(v.UnrelatedAgree)/float32(totalUnrelated) < perRelationTypeRate {
+			invalidatedPlayers = append(invalidatedPlayers, k)
+		}
+	}
+
+	err = domain.InvalidateAnnotationsByPlayerIDs(invalidatedPlayers)
+	if err != nil {
+		return nil, err
+	}
+
+	return invalidatedPlayers, nil
 }

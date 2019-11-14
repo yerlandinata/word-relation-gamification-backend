@@ -50,6 +50,7 @@ func GetWordPairByAnnotationCriteria(criteria AnnotationCriteria, limit int) ([]
 
 	whereStmt := `
 		wp.active_status=$1
+		AND a.is_valid=true
 		AND wp.id NOT IN (
 			SELECT wp_id FROM annotation WHERE player_id=$2
 		)

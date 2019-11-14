@@ -12,6 +12,15 @@ const (
 	LoginOK           int = 1
 )
 
+type PlayerGoldStandardAgreements struct {
+	OverallAgree      int
+	OverallDisagree   int
+	HyponymyAgree     int
+	HyponymyDisagree  int
+	UnrelatedAgree    int
+	UnrelatedDisagree int
+}
+
 func Login(userID int64) (*domain.Player, int, error) {
 	player, err := domain.GetPlayerByID(userID)
 
