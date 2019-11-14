@@ -11,7 +11,7 @@ type Player struct {
 	ID              int64  `json:"id"`
 	DisplayName     string `json:"display_name"`
 	CampaignSource  string `json:"campaign_source"`
-	Score           int64  `json:"score"`
+	Score           int    `json:"score"`
 	AnnotationCount int    `json:"annotation_count"`
 	Rank            int    `json:"rank"`
 	ElapsedTime     int    `json:"elapsed"`
