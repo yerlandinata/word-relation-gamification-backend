@@ -9,6 +9,7 @@ import (
 
 const (
 	HyponymyRelationID  int = 1
+	SynonymyRelationID  int = 2
 	UnrelatedRelationID int = 3
 )
 

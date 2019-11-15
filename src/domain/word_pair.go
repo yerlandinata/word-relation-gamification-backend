@@ -135,7 +135,7 @@ func GetWordPairByAnnotationCriteria(criteria AnnotationCriteria, limit int) ([]
 	return result, err
 }
 
-func GetGoldStandardWordPairs() ([]GoldStandard, error) {
+func GetGoldStandardWordPairs(wrtID, limit int) ([]GoldStandard, error) {
 	var result []GoldStandard
 
 	db := config.GetDB()
@@ -145,7 +145,9 @@ func GetGoldStandardWordPairs() ([]GoldStandard, error) {
 		FROM gold_standard g
 		LEFT JOIN word_pair wp ON g.wp_id=wp.id
 		LEFT JOIN word_relation_type wrt ON g.wrt_id=wrt.id
-	`, make([]interface{}, 0)...)
+		WHERE g.wrt_id=$1
+		LIMIT $2
+	`, wrtID, limit)
 
 	if err != nil {
 		log.Printf("DB query error: %+v\n", err)
