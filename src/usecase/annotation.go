@@ -1,8 +1,6 @@
 package usecase
 
 import (
-	"errors"
-
 	"github.com/yerlandinata/word-relation-gamification-backend/src/config"
 	"github.com/yerlandinata/word-relation-gamification-backend/src/domain"
 )
@@ -22,7 +20,7 @@ func AddAnnotation(annotation *domain.Annotation) (*domain.Player, error) {
 	}
 
 	if player.ElapsedTime > config.GetAppConfig().GameTimeLimitMS {
-		return nil, errors.New("Time's up")
+		// return nil, errors.New("Time's up")
 	}
 
 	score := 0

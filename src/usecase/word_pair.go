@@ -21,7 +21,7 @@ func GetClassificationWordPair(playerID int64) (*domain.WordPair, error) {
 	}
 
 	if player.ElapsedTime > config.GetAppConfig().GameTimeLimitMS {
-		return nil, nil
+		// return nil, nil
 	}
 
 	annotationCriteria.IsGoldStandard = shouldTrickPlayer(player.AnnotationCount)
@@ -45,10 +45,12 @@ func GetClassificationWordPair(playerID int64) (*domain.WordPair, error) {
 }
 
 func shouldTrickPlayer(score int) bool {
-	return score < 3 || (score%5 == 0 && score <= 30) || (score%7 == 0 && score > 30)
+	// return score < 3 || (score%5 == 0 && score <= 30) || (score%7 == 0 && score > 30)
+	return false
 }
 
 func GetGoldStandards() ([]domain.GoldStandard, error) {
+	return make([]domain.GoldStandard, 0), nil
 	hyponymyGoldStandards, err := domain.GetGoldStandardWordPairs(HyponymyRelationID, 20)
 	if err != nil {
 		return nil, err
