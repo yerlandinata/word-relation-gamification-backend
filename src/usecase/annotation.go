@@ -44,20 +44,20 @@ func AddAnnotation(annotation *domain.Annotation) (*domain.Player, error) {
 			if annotation.WordRelationTypeID == config.GetAppConfig().NotSureAnnotationDBID {
 				score = 0
 			} else {
-				score = -2
+				score = -2 * player.Level
 				// add more penalty if the player is playing too fast
 				if annotation.PlayerTimeMs < 1000 {
-					score = -7
+					score = -4 * player.Level
 				}
 				if annotation.PlayerTimeMs < 500 {
-					score = -20
+					score = -7 * player.Level
 				}
 			}
 		}
 	} else {
-		if annotation.PlayerTimeMs < 1000 {
-			// too fast
-			return player, nil
+		if annotation.PlayerTimeMs < 1000*player.Level {
+			score = 0
+			annotation.WordRelationTypeID = config.GetAppConfig().NotSureAnnotationDBID
 		}
 	}
 

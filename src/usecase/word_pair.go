@@ -44,8 +44,15 @@ func GetClassificationWordPair(playerID int64) (*domain.WordPair, error) {
 	return &wordPairs[randomIdx], err
 }
 
-func shouldTrickPlayer(score int) bool {
-	return score < 3 || (score%5 == 0 && score <= 30) || (score%7 == 0 && score > 30)
+func shouldTrickPlayer(annotationCount int) bool {
+	if annotationCount < 3 {
+		return true
+	} else if annotationCount < 30 {
+		return annotationCount%5 == 0
+	} else if annotationCount < 100 {
+		return annotationCount%7 == 0
+	}
+	return annotationCount%11 == 0
 }
 
 func GetGoldStandards() ([]domain.GoldStandard, error) {
