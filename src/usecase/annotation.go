@@ -69,6 +69,7 @@ func AddAnnotation(annotation *domain.Annotation) (*domain.Player, error) {
 	}
 
 	player.Score += score
+	player.ElapsedTime += annotation.PlayerTimeMs
 
 	return player, err
 }
