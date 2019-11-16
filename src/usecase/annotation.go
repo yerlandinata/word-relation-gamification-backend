@@ -55,7 +55,15 @@ func AddAnnotation(annotation *domain.Annotation) (*domain.Player, error) {
 			}
 		}
 	} else {
-		if annotation.PlayerTimeMs < 1000*player.Level {
+		minTime := 0
+		if player.Level == 1 {
+			minTime = 1000
+		} else if player.Level < 5 {
+			minTime = 2000
+		} else {
+			minTime = 4000
+		}
+		if annotation.PlayerTimeMs < minTime {
 			score = 0
 			annotation.WordRelationTypeID = config.GetAppConfig().NotSureAnnotationDBID
 		}
