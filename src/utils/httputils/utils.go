@@ -100,6 +100,9 @@ func handleOptions(w http.ResponseWriter, allowedMethod string) {
 
 func ResponseJSON(w http.ResponseWriter, statusCode int, body interface{}) {
 
+	if body == nil {
+		body = errors.New("")
+	}
 	js, err := json.Marshal(body)
 	if err != nil {
 		ErrorResponseJSON(w, http.StatusInternalServerError, err)
@@ -113,6 +116,9 @@ func ResponseJSON(w http.ResponseWriter, statusCode int, body interface{}) {
 }
 
 func ErrorResponseJSON(w http.ResponseWriter, statusCode int, err error) {
+	if err == nil {
+		err = errors.New("")
+	}
 	js, err := json.Marshal(HTTPError{ErrorMessage: err.Error()})
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
