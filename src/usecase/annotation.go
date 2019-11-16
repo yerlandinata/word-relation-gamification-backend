@@ -39,7 +39,7 @@ func AddAnnotation(annotation *domain.Annotation) (*domain.Player, error) {
 
 	if goldStandard != nil {
 		if annotation.WordRelationTypeID == goldStandard.WordRelationType.ID {
-			score = 2
+			score = 2 * player.Level
 		} else {
 			if annotation.WordRelationTypeID == config.GetAppConfig().NotSureAnnotationDBID {
 				score = 0
