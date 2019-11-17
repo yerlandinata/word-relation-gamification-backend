@@ -30,7 +30,7 @@ func GetClassificationWordPair(playerID int64) (*domain.WordPair, error) {
 		annotationCriteria.MaxCount = config.GetAppConfig().TargetAnnotationCountPerGoldStandard
 	}
 
-	wordPairs, err := domain.GetWordPairByAnnotationCriteria(annotationCriteria, 75*player.Level)
+	wordPairs, err := domain.GetWordPairByAnnotationCriteria(annotationCriteria, 75)
 	if err != nil {
 		return nil, err
 	}
