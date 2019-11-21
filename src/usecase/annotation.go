@@ -127,7 +127,8 @@ func InvalidateAnnotationsByPlayerAndGoldStandardAgreements(overallRate, perRela
 
 		if float32(v.OverallAgree)/float32(totalOverall) < overallRate ||
 			float32(v.HyponymyAgree)/float32(totalHyponymy) < perRelationTypeRate ||
-			float32(v.UnrelatedAgree)/float32(totalUnrelated) < perRelationTypeRate {
+			float32(v.UnrelatedAgree)/float32(totalUnrelated) < perRelationTypeRate ||
+			totalOverall < 5 {
 			invalidatedPlayers = append(invalidatedPlayers, k)
 		}
 	}
