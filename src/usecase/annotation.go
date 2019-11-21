@@ -100,7 +100,7 @@ func InvalidateAnnotationsByPlayerAndGoldStandardAgreements(overallRate, perRela
 			agreements[a.PlayerID] = &PlayerGoldStandardAgreements{}
 		}
 
-		if a.GoldStandardRelationTypeID == 0 {
+		if a.GoldStandardRelationTypeID == 0 || a.WordRelationTypeID == config.GetAppConfig().NotSureAnnotationDBID {
 			continue
 		}
 
