@@ -47,10 +47,7 @@ func AddAnnotation(annotation *domain.Annotation) (*domain.Player, error) {
 				score = -2 * player.Level
 				// add more penalty if the player is playing too fast
 				if annotation.PlayerTimeMs < 1000 {
-					score = -4 * player.Level
-				}
-				if annotation.PlayerTimeMs < 500 {
-					score = -7 * player.Level
+					score = -3 * player.Level
 				}
 			}
 		}
