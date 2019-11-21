@@ -55,10 +55,14 @@ func AddAnnotation(annotation *domain.Annotation) (*domain.Player, error) {
 		minTime := 0
 		if player.Level == 1 {
 			minTime = 1000
-		} else if player.Level < 5 {
+		} else if player.Level == 2 {
+			minTime = 1500
+		} else if player.Level == 3 {
 			minTime = 2000
+		} else if player.Level == 4 {
+			minTime = 2500
 		} else {
-			minTime = 4000
+			minTime = 3000
 		}
 		if annotation.PlayerTimeMs < minTime {
 			score = 0
