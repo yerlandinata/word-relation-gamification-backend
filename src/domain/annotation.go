@@ -17,6 +17,7 @@ type Annotation struct {
 	PlayerID                   int64 `json:"player_id"`
 	PlayerTimeMs               int   `json:"player_time_ms"`
 	GoldStandardRelationTypeID int
+	IsValid                    bool
 }
 
 func GetAllAnnotations() ([]Annotation, error) {
@@ -99,8 +100,8 @@ func AddAnnotationAndAddPlayerScore(annotation *Annotation, score int) error {
 			player_time_ms,
 			created_at,
 			is_valid
-		) VALUES ($1, $2, $3, $4, CURRENT_TIMESTAMP, true)
-	`, annotation.WordPairID, annotation.WordRelationTypeID, annotation.PlayerID, annotation.PlayerTimeMs)
+		) VALUES ($1, $2, $3, $4, CURRENT_TIMESTAMP, $5)
+	`, annotation.WordPairID, annotation.WordRelationTypeID, annotation.PlayerID, annotation.PlayerTimeMs, annotation.IsValid)
 
 	if err != nil {
 		log.Printf("DB tx insertion error: %+v\n", err)
