@@ -110,16 +110,20 @@ func InvalidateAnnotationsByPlayerAndGoldStandardAgreements(overallRate, perRela
 			switch g := a.GoldStandardRelationTypeID; g {
 			case HyponymyRelationID:
 				agreements[a.PlayerID].HyponymyDisagree++
-			default:
+			case UnrelatedRelationID:
 				agreements[a.PlayerID].UnrelatedDisagree++
+			default:
+				break
 			}
 		} else {
 			agreements[a.PlayerID].OverallAgree++
 			switch g := a.GoldStandardRelationTypeID; g {
 			case HyponymyRelationID:
 				agreements[a.PlayerID].HyponymyAgree++
-			default:
+			case UnrelatedRelationID:
 				agreements[a.PlayerID].UnrelatedAgree++
+			default:
+				break
 			}
 		}
 	}
