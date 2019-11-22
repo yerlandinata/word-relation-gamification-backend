@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"errors"
+	"log"
 
 	"github.com/yerlandinata/word-relation-gamification-backend/src/config"
 	"github.com/yerlandinata/word-relation-gamification-backend/src/domain"
@@ -139,6 +140,7 @@ func InvalidateAnnotationsByPlayerAndGoldStandardAgreements(overallRate, perRela
 			float32(v.UnrelatedAgree)/float32(totalUnrelated) < perRelationTypeRate ||
 			totalOverall < 5 {
 			invalidatedPlayers = append(invalidatedPlayers, k)
+			log.Printf("invalidated %d | overall: %f | hyponymy: %f | unrelated: %f | gold annotations: %d\n", k, float32(v.OverallAgree)/float32(totalOverall), float32(v.HyponymyAgree)/float32(totalHyponymy), float32(v.UnrelatedAgree)/float32(totalUnrelated), totalOverall)
 		}
 	}
 
