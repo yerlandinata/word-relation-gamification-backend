@@ -48,8 +48,6 @@ func RecordPlayerOnboardingTime(player *domain.Player, onboardingTimeMS int) err
 }
 
 func PlayerLevelUp(playerID int64) error {
-	// first, please check if the player can play again
-	// player can play again if "we think" that the potential score could be higher
 
 	annotationCriteria := domain.AnnotationCriteria{
 		NotAnnotatedByPlayerID: playerID,
@@ -58,24 +56,24 @@ func PlayerLevelUp(playerID int64) error {
 
 	// count the non gold standard
 	annotationCriteria.IsGoldStandard = false
-	wordPairs, err := domain.GetWordPairByAnnotationCriteria(annotationCriteria, 100)
+	wordPairs, err := domain.GetWordPairByAnnotationCriteria(annotationCriteria, 1)
 	if err != nil {
 		return err
 	}
 
-	if len(wordPairs) < 100 {
+	if len(wordPairs) < 1 {
 		return errors.New("cannot play anymore")
 	}
 
 	// count the gold standard
 	annotationCriteria.IsGoldStandard = true
 	annotationCriteria.MaxCount = config.GetAppConfig().TargetAnnotationCountPerGoldStandard
-	wordPairs, err = domain.GetWordPairByAnnotationCriteria(annotationCriteria, 25)
+	wordPairs, err = domain.GetWordPairByAnnotationCriteria(annotationCriteria, 1)
 	if err != nil {
 		return err
 	}
 
-	if len(wordPairs) < 25 {
+	if len(wordPairs) < 1 {
 		return errors.New("cannot play anymore")
 	}
 
