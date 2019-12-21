@@ -2,7 +2,6 @@ package httphandler
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 
 	"github.com/yerlandinata/word-relation-gamification-backend/src/domain"
@@ -40,7 +39,7 @@ func AddAnnotation(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if wordPair == nil {
-		httputils.ErrorResponseJSON(w, http.StatusForbidden, fmt.Errorf("No word pair for player with ID %d", player.ID))
+		httputils.ResponseJSON(w, http.StatusCreated, AddAnnotationResponse{Player: player})
 		return
 	}
 
