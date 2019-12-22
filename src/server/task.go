@@ -23,7 +23,7 @@ func filterAnnotators() {
 
 	log.Println("filtering annotators..")
 
-	playerIDs, err := usecase.InvalidateAnnotationsByPlayerAndGoldStandardAgreements(.5, .4)
+	playerIDs, err := usecase.InvalidateAnnotationsByPlayerAndGoldStandardAgreements(.39999, .29999)
 	if err != nil {
 		log.Println(err)
 	}
